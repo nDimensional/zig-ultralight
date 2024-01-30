@@ -29,7 +29,7 @@ pub fn build(b: *std.Build) !void {
 
     const exe = b.addExecutable(.{
         .name = "example",
-        .root_source_file = LazyPath.relative("main.zig"),
+        .root_source_file = LazyPath.relative("example.zig"),
         .target = target,
         .optimize = .ReleaseFast,
     });

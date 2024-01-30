@@ -34,7 +34,7 @@ const Environment = struct {
         Platform.setLogger(Platform.logger);
 
         env.config = Config.create();
-        env.config.setResourcePathPrefix("SDK2/resources/");
+        env.config.setResourcePathPrefix("SDK/resources/");
 
         env.settings = Settings.create();
 
