@@ -53,10 +53,7 @@ pub fn setProperty(ctx: Context, object: c.JSObjectRef, property: [*:0]const u8,
     }
 }
 
-pub const Function = fn (
-    ctx: Context,
-    args: []const c.JSValueRef,
-) anyerror!c.JSValueRef;
+pub const Function = fn (ctx: Context, args: []const c.JSValueRef) anyerror!c.JSValueRef;
 
 pub fn makeFunction(ctx: Context, name: [*:0]const u8, comptime callback: *const Function) c.JSObjectRef {
     const Callback = struct {
@@ -121,4 +118,67 @@ fn getArrayType(comptime T: type) c.JSTypedArrayType {
         u64 => c.kJSTypedArrayTypeBigUint64Array,
         else => @compileError("invalid typed array type"),
     };
+}
+
+pub fn Class(comptime T: type) type {
+    return struct {
+        const Self = @This();
+
+        ctx: Context,
+        ptr: c.JSClassRef,
+
+        pub fn make(self: Self, ptr: *T) c.JSObjectRef {
+            return c.JSObjectMake(self.ctx.ptr, self.ptr, ptr);
+        }
+    };
+}
+
+pub fn Method(comptime T: type) type {
+    return struct {
+        name: [*:0]const u8,
+        exec: *const fn (ptr: *T, ctx: Context, args: []const c.JSValueRef) anyerror!c.JSValueRef,
+    };
+}
+
+pub fn createClass(ctx: Context, comptime T: type, name: [*:0]const u8, comptime methods: []const Method(T)) Class(T) {
+    var static_functions: [methods.len + 1]c.JSStaticFunction = undefined;
+
+    inline for (methods, 0..) |method, i| {
+        const Callback = struct {
+            pub fn exec(
+                ctx_ptr: c.JSContextRef,
+                _: c.JSObjectRef,
+                this: c.JSObjectRef,
+                argc: usize,
+                args: [*c]const c.JSValueRef,
+                exception: [*c]c.JSValueRef,
+            ) callconv(.C) c.JSValueRef {
+                const ctx_ref = Context{ .ptr = ctx_ptr };
+                const ptr: *T = @alignCast(@ptrCast(c.JSObjectGetPrivate(@constCast(this))));
+                return method.exec(ptr, ctx_ref, args[0..argc]) catch |err| {
+                    if (exception) |result| {
+                        result.* = ctx_ref.makeError(@errorName(err));
+                    }
+
+                    return null;
+                };
+            }
+        };
+
+        const attributes = c.kJSPropertyAttributeReadOnly | c.kJSPropertyAttributeDontEnum | c.kJSPropertyAttributeDontDelete;
+
+        static_functions[i] = .{
+            .name = method.name,
+            .callAsFunction = &Callback.exec,
+            .attributes = attributes,
+        };
+    }
+
+    static_functions[methods.len] = .{ .name = null, .callAsFunction = null, .attributes = 0 };
+
+    var definition: c.JSClassDefinition = c.kJSClassDefinitionEmpty;
+    definition.className = name;
+    definition.staticFunctions = &static_functions;
+
+    return .{ .ctx = ctx, .ptr = c.JSClassCreate(&definition) };
 }

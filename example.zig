@@ -11,6 +11,10 @@ const Window = ul.AppCore.Window;
 const Overlay = ul.AppCore.Overlay;
 const Settings = ul.AppCore.Settings;
 
+const Context = ul.JavaScriptCore.Context;
+const ValueRef = ul.JavaScriptCore.ValueRef;
+const ObjectRef = ul.JavaScriptCore.ObjectRef;
+
 pub fn main() !void {
     var env: Environment = undefined;
     try env.init();
@@ -75,14 +79,22 @@ const Environment = struct {
         self.app.run();
     }
 
-    fn onDOMReady(env: *Environment, _: View.DOMReadyEvent) void {
-        // const js = File.init("dist/index.js") catch @panic("failed to open file");
-        // defer js.deinit();
+    fn onDOMReady(env: *Environment, event: View.DOMReadyEvent) void {
+        const ctx = event.view.lock();
+        defer event.view.unlock();
 
-        env.view.evaluateScript("console.log(312)") catch |err| {
-            std.log.err("failed to evaluate script: {any}", .{err});
-            return;
-        };
+        const class = ctx.createClass(Environment, "Environment", &.{.{ .name = "boop", .exec = &boop }});
+        const global = ctx.getGlobal();
+        ctx.setProperty(global, "env", class.make(env));
+
+        ctx.evaluateScript("window.env.boop()") catch @panic("window.env.boop failed");
+    }
+
+    fn boop(env: *Environment, ctx: Context, args: []const ValueRef) !ValueRef {
+        _ = env; // autofix
+        _ = ctx; // autofix
+        _ = args; // autofix
+        return null;
     }
 
     fn onConsoleMessage(_: *Environment, event: View.ConsoleMessageEvent) void {
