@@ -1,8 +1,10 @@
 # zig-ultralight
 
-Zig bindings for Ultralight.
+Zig bindings for Ultralight. 
 
 ## Usage
+
+Requires Zig `0.12.0-dev.2030+2ac315c24` or later.
 
 Add zig-ultralight to `build.zig.zon`
 
