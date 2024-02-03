@@ -24,7 +24,7 @@ ptr: c.ULRenderer,
 /// @note  You should not call this if you are using ulCreateApp(), it creates its own renderer and
 ///        provides default implementations for various platform handlers automatically.
 ///
-pub fn create(config: Config) Renderer {
+pub fn init(config: Config) Renderer {
     const ptr = c.ulCreateRenderer(config.ptr);
     return .{ .ptr = ptr };
 }
@@ -32,7 +32,7 @@ pub fn create(config: Config) Renderer {
 ///
 /// Destroy the renderer.
 ///
-pub fn destroy(self: Renderer) void {
+pub fn deinit(self: Renderer) void {
     c.ulDestroyRenderer(self.ptr);
 }
 

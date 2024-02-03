@@ -37,23 +37,23 @@ const Environment = struct {
         Platform.setFileSystem(Platform.filesystem);
         Platform.setLogger(Platform.logger);
 
-        env.config = Config.create();
+        env.config = Config.init();
         env.config.setResourcePathPrefix("SDK/resources/");
 
-        env.settings = Settings.create();
+        env.settings = Settings.init();
 
-        env.app = App.create(env.settings, env.config);
+        env.app = App.init(env.settings, env.config);
         env.app.setUpdateCallback(Environment, env, &onUpdate);
 
         const monitor = env.app.getMainMonitor();
-        env.window = Window.create(monitor, .{
+        env.window = Window.init(monitor, .{
             .width = 1200,
             .height = 800,
             .tilted = true,
             .resizable = true,
         });
 
-        env.overlay = Overlay.create(env.window, env.window.getWidth(), env.window.getHeight(), 0, 0);
+        env.overlay = Overlay.init(env.window, env.window.getWidth(), env.window.getHeight(), 0, 0);
 
         env.view = env.overlay.getView();
 
@@ -65,11 +65,11 @@ const Environment = struct {
     }
 
     pub fn deinit(self: Environment) void {
-        self.overlay.destroy();
-        self.window.destroy();
-        self.app.destroy();
-        self.config.destroy();
-        self.settings.destroy();
+        self.overlay.deinit();
+        self.window.deinit();
+        self.app.deinit();
+        self.config.deinit();
+        self.settings.deinit();
 
         self.html.deinit();
     }

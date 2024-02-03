@@ -7,7 +7,7 @@ ptr: c.ULSettings,
 ///
 /// Create settings with default values (see <AppCore/App.h>).
 ///
-pub fn create() Settings {
+pub fn init() Settings {
     const ptr = c.ulCreateSettings();
     return .{ .ptr = ptr };
 }
@@ -15,7 +15,7 @@ pub fn create() Settings {
 ///
 /// Destroy settings.
 ///
-pub fn destroy(self: Settings) void {
+pub fn deinit(self: Settings) void {
     c.ulDestroySettings(self.ptr);
 }
 

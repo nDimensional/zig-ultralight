@@ -20,7 +20,7 @@ ptr: c.ULWindow,
 ///
 /// Create a new Window.
 ///
-pub fn create(monitor: Monitor, options: CreateOptions) Window {
+pub fn init(monitor: Monitor, options: CreateOptions) Window {
     var flags: c_uint = 0;
     if (options.borderless) flags |= c.kWindowFlags_Borderless;
     if (options.tilted) flags |= c.kWindowFlags_Titled;
@@ -30,6 +30,13 @@ pub fn create(monitor: Monitor, options: CreateOptions) Window {
 
     const ptr = c.ulCreateWindow(monitor.ptr, options.width, options.height, options.fullscreen, flags);
     return .{ .ptr = ptr };
+}
+
+///
+/// Destroy a Window.
+///
+pub fn deinit(self: Window) void {
+    c.ulDestroyWindow(self.ptr);
 }
 
 pub const CloseEvent = struct { window: Window };
@@ -68,13 +75,6 @@ pub fn setResizeCallback(
     };
 
     c.ulWindowSetResizeCallback(self.ptr, &Callback.exec, user_data);
-}
-
-///
-/// Destroy a Window.
-///
-pub fn destroy(self: Window) void {
-    c.ulDestroyWindow(self.ptr);
 }
 
 ///

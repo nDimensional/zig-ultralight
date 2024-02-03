@@ -14,9 +14,16 @@ ptr: c.ULApp,
 ///
 /// Create the App singleton.
 ///
-pub fn create(settings: Settings, config: Config) App {
+pub fn init(settings: Settings, config: Config) App {
     const ptr = c.ulCreateApp(settings.ptr, config.ptr);
     return .{ .ptr = ptr };
+}
+
+///
+/// Destroy the App instance.
+///
+pub fn deinit(app: App) void {
+    c.ulDestroyApp(app.ptr);
 }
 
 pub fn setUpdateCallback(
@@ -32,13 +39,6 @@ pub fn setUpdateCallback(
     };
 
     c.ulAppSetUpdateCallback(self.ptr, &Callback.exec, user_data);
-}
-
-///
-/// Destroy the App instance.
-///
-pub fn destroy(app: App) void {
-    c.ulDestroyApp(app.ptr);
 }
 
 ///

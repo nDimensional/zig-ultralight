@@ -7,7 +7,7 @@ ptr: c.ULConfig,
 ///
 /// Create config with default values (see <Ultralight/platform/Config.h>).
 ///
-pub fn create() Config {
+pub fn init() Config {
     const ptr = c.ulCreateConfig();
     return .{ .ptr = ptr };
 }
@@ -15,7 +15,7 @@ pub fn create() Config {
 ///
 /// Destroy config.
 ///
-pub fn destroy(self: Config) void {
+pub fn deinit(self: Config) void {
     c.ulDestroyConfig(self.ptr);
 }
 
