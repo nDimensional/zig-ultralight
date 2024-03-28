@@ -20,7 +20,7 @@ ptr: c.ULWindow,
 ///
 /// Create a new Window.
 ///
-pub fn init(monitor: Monitor, options: CreateOptions) Window {
+pub fn create(monitor: Monitor, options: CreateOptions) Window {
     var flags: c_uint = 0;
     if (options.borderless) flags |= c.kWindowFlags_Borderless;
     if (options.tilted) flags |= c.kWindowFlags_Titled;
@@ -35,7 +35,7 @@ pub fn init(monitor: Monitor, options: CreateOptions) Window {
 ///
 /// Destroy a Window.
 ///
-pub fn deinit(self: Window) void {
+pub fn destroy(self: Window) void {
     c.ulDestroyWindow(self.ptr);
 }
 

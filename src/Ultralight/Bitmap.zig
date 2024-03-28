@@ -63,7 +63,7 @@ pub fn copy(self: Bitmap) Bitmap {
 /// Destroy a bitmap (you should only destroy Bitmaps you have explicitly created via one of the
 /// creation functions above.
 ///
-pub fn deinit(self: Bitmap) void {
+pub fn destroy(self: Bitmap) void {
     c.ulDestroyBitmap(self.ptr);
 }
 

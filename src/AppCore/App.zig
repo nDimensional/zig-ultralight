@@ -14,7 +14,7 @@ ptr: c.ULApp,
 ///
 /// Create the App singleton.
 ///
-pub fn init(settings: Settings, config: Config) App {
+pub fn create(settings: Settings, config: Config) App {
     const ptr = c.ulCreateApp(settings.ptr, config.ptr);
     return .{ .ptr = ptr };
 }
@@ -22,7 +22,7 @@ pub fn init(settings: Settings, config: Config) App {
 ///
 /// Destroy the App instance.
 ///
-pub fn deinit(app: App) void {
+pub fn destroy(app: App) void {
     c.ulDestroyApp(app.ptr);
 }
 

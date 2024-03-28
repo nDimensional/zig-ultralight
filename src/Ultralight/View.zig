@@ -13,13 +13,13 @@ const View = @This();
 
 ptr: c.ULView,
 
-pub const ViewConfig = struct {
+pub const Config = struct {
     ptr: c.ULViewConfig,
 
     ///
     /// Create view configuration with default values (see <Ultralight/platform/View.h>).
     ///
-    pub fn init() ViewConfig {
+    pub fn create() Config {
         const ptr = c.ulCreateViewConfig();
         return .{ .ptr = ptr };
     }
@@ -27,7 +27,7 @@ pub const ViewConfig = struct {
     ///
     /// Destroy view configuration.
     ///
-    pub fn deinit(self: ViewConfig) void {
+    pub fn destroy(self: Config) void {
         c.ulDestroyViewConfig(self.ptr);
     }
 };
@@ -37,8 +37,8 @@ pub const ViewConfig = struct {
 ///
 /// @note  You can pass null to 'session' to use the default session.
 ///
-pub fn init(renderer: Renderer, width: u32, height: u32, view_config: ViewConfig, session: c.ULSession, display_id: u32) View {
-    const ptr = c.ulCreateView(renderer.ptr, width, height, view_config.ptr, session, display_id);
+pub fn create(renderer: Renderer, width: u32, height: u32, config: Config, session: c.ULSession, display_id: u32) View {
+    const ptr = c.ulCreateView(renderer.ptr, width, height, config.ptr, session, display_id);
     const view = View{ .ptr = ptr };
     return view;
 }
@@ -46,7 +46,7 @@ pub fn init(renderer: Renderer, width: u32, height: u32, view_config: ViewConfig
 ///
 /// Destroy a View.
 ///
-pub fn deinit(self: View) void {
+pub fn destroy(self: View) void {
     c.ulDestroyView(self.ptr);
 }
 

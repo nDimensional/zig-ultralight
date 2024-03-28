@@ -12,7 +12,7 @@ ptr: c.ULOverlay,
 ///
 /// Create a new Overlay.
 ///
-pub fn init(window: Window, width: u32, height: u32, x: i32, y: i32) Overlay {
+pub fn create(window: Window, width: u32, height: u32, x: i32, y: i32) Overlay {
     const ptr = c.ulCreateOverlay(window.ptr, width, height, x, y);
     return .{ .ptr = ptr };
 }
@@ -20,7 +20,7 @@ pub fn init(window: Window, width: u32, height: u32, x: i32, y: i32) Overlay {
 ///
 /// Create a new Overlay, wrapping an existing View.
 ///
-pub fn initWithView(window: Window, view: View, x: i32, y: i32) Overlay {
+pub fn createWithView(window: Window, view: View, x: i32, y: i32) Overlay {
     const ptr = c.ulCreateOverlayWithView(window.ptr, view.ptr, x, y);
     return .{ .ptr = ptr };
 }
@@ -28,7 +28,7 @@ pub fn initWithView(window: Window, view: View, x: i32, y: i32) Overlay {
 ///
 /// Destroy an overlay.
 ///
-pub fn deinit(self: Overlay) void {
+pub fn destroy(self: Overlay) void {
     c.ulDestroyOverlay(self.ptr);
 }
 
