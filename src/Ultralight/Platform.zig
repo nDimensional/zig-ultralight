@@ -5,6 +5,39 @@ const utils = @import("./utils.zig");
 const getString = utils.getString;
 
 ///
+/// This is only needed if you are not calling ulCreateApp().
+///
+/// Initializes the platform font loader and sets it as the current FontLoader.
+///
+pub fn enablePlatformFontLoader() void {
+    c.ulEnablePlatformFontLoader();
+}
+
+///
+/// This is only needed if you are not calling ulCreateApp().
+///
+/// Initializes the platform file system (needed for loading file:/// URLs) and
+/// sets it as the current FileSystem.
+///
+/// You can specify a base directory path to resolve relative paths against.
+///
+pub fn enablePlatformFileSystem(base_dir: []const u8) void {
+    c.ulEnablePlatformFileSystem(c.ulCreateStringUTF8(base_dir.ptr, base_dir.len));
+}
+
+///
+/// This is only needed if you are not calling ulCreateApp().
+///
+/// Initializes the default logger (writes the log to a file).
+///
+/// You should specify a writable log path to write the log to
+/// for example "./ultralight.log".
+///
+pub fn enableDefaultLogger(base_dir: []const u8) void {
+    c.ulEnableDefaultLogger(c.ulCreateStringUTF8(base_dir.ptr, base_dir.len));
+}
+
+///
 /// Set a custom Logger implementation.
 ///
 /// This is used to log debug messages to the console or to a log file.
@@ -25,17 +58,6 @@ fn logMessage(log_level: c.ULLogLevel, message: c.ULString) callconv(.C) void {
 }
 
 pub const logger = c.ULLogger{ .log_message = &logMessage };
-
-pub fn FileSystem(Impl: anytype) type {
-    return struct {
-        impl: *const Impl,
-        fileExists: *const fn (impl: *const Impl, path: []const u8) bool,
-        getFileMimeType: *const fn (impl: *const Impl, path: []const u8) []const u8,
-        getFileCharset: *const fn (impl: *const Impl, path: []const u8) []const u8,
-        openFile: *const fn (impl: *const Impl, path: []const u8) []u8,
-        destroyFileBuffer: *const fn (impl: *const Impl, data: []u8) []u8,
-    };
-}
 
 ///
 /// Set a custom FileSystem implementation.

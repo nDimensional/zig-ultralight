@@ -34,7 +34,7 @@ const Environment = struct {
     html: File,
 
     pub fn init(env: *Environment) !void {
-        Platform.setFileSystem(Platform.filesystem);
+        Platform.enablePlatformFileSystem(".");
         Platform.setLogger(Platform.logger);
 
         env.config = Config.create();
