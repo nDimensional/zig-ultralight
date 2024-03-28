@@ -37,8 +37,8 @@ pub const Config = struct {
 ///
 /// @note  You can pass null to 'session' to use the default session.
 ///
-pub fn create(renderer: Renderer, width: u32, height: u32, config: Config, session: c.ULSession, display_id: u32) View {
-    const ptr = c.ulCreateView(renderer.ptr, width, height, config.ptr, session, display_id);
+pub fn create(renderer: Renderer, width: u32, height: u32, config: Config, session: c.ULSession) View {
+    const ptr = c.ulCreateView(renderer.ptr, width, height, config.ptr, session);
     const view = View{ .ptr = ptr };
     return view;
 }
