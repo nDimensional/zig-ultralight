@@ -26,6 +26,17 @@ fn logMessage(log_level: c.ULLogLevel, message: c.ULString) callconv(.C) void {
 
 pub const logger = c.ULLogger{ .log_message = &logMessage };
 
+pub fn FileSystem(Impl: anytype) type {
+    return struct {
+        impl: *const Impl,
+        fileExists: *const fn (impl: *const Impl, path: []const u8) bool,
+        getFileMimeType: *const fn (impl: *const Impl, path: []const u8) []const u8,
+        getFileCharset: *const fn (impl: *const Impl, path: []const u8) []const u8,
+        openFile: *const fn (impl: *const Impl, path: []const u8) []u8,
+        destroyFileBuffer: *const fn (impl: *const Impl, data: []u8) []u8,
+    };
+}
+
 ///
 /// Set a custom FileSystem implementation.
 ///
@@ -41,16 +52,22 @@ pub fn setFileSystem(impl: c.ULFileSystem) void {
 }
 
 fn fileExists(path: c.ULString) callconv(.C) bool {
-    std.fs.cwd().access(getString(path), .{}) catch |err| {
+    std.log.info("fileExists: {s}", .{getString(path)});
+    std.fs.cwd().access(getString(path), .{ .mode = .read_only }) catch |err| {
         switch (err) {
-            error.FileNotFound => return false,
+            error.FileNotFound => {
+                std.log.info("fileExists: NO", .{});
+                return false;
+            },
             else => {
                 std.log.err("error accessing filesystem: {any}", .{err});
+                std.log.info("fileExists: NO", .{});
                 return false;
             },
         }
     };
 
+    std.log.info("fileExists: YES", .{});
     return true;
 }
 
