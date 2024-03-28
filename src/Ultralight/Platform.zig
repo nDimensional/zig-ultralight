@@ -51,17 +51,21 @@ pub fn setFileSystem(impl: c.ULFileSystem) void {
     c.ulPlatformSetFileSystem(impl);
 }
 
+var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+
 fn fileExists(path: c.ULString) callconv(.C) bool {
     std.log.info("fileExists: {s}", .{getString(path)});
+    std.log.info("cwd: {s}", .{try std.fs.cwd().realpath(".", &path_buffer)});
+    std.log.info("abs: {s}", .{try std.fs.cwd().realpath(getString(path), &path_buffer)});
     std.fs.cwd().access(getString(path), .{ .mode = .read_only }) catch |err| {
         switch (err) {
             error.FileNotFound => {
-                std.log.info("fileExists: NO", .{});
+                std.log.info("fileExists: NO (FileNotFound)", .{});
                 return false;
             },
             else => {
                 std.log.err("error accessing filesystem: {any}", .{err});
-                std.log.info("fileExists: NO", .{});
+                std.log.info("fileExists: NO ({any})", .{err});
                 return false;
             },
         }
