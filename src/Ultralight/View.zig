@@ -5,7 +5,10 @@ const Context = @import("../JavaScriptCore/Context.zig");
 const utils = @import("utils.zig");
 const getString = utils.getString;
 
+const Surface = @import("Surface.zig");
 const Renderer = @import("Renderer.zig");
+const RenderTarget = @import("RenderTarget.zig");
+
 const View = @This();
 
 ptr: c.ULView,
@@ -470,6 +473,38 @@ pub fn setDeviceScale(self: View, scale: f64) void {
 ///
 pub fn isLoading(self: View) bool {
     return c.ulViewIsLoading(self.ptr);
+}
+
+///
+/// Get the RenderTarget for the View.
+///
+/// @note  Only valid if this View is GPU accelerated.
+///
+///        You can use this with your GPUDriver implementation to bind and display the
+///        corresponding texture in your application.
+///
+pub fn getRenderTarget(self: View) RenderTarget {
+    const ptr = c.ulViewGetRenderTarget(self.ptr);
+    return .{ .ptr = ptr };
+}
+
+///
+/// Get the Surface for the View (native pixel buffer that the CPU renderer draws into).
+///
+/// @note  This operation is only valid if you're managing the Renderer yourself (eg, you've
+///        previously called ulCreateRenderer() instead of ulCreateApp()).
+///
+///        This function will return NULL if this View is GPU accelerated.
+///
+///        The default Surface is BitmapSurface but you can provide your own Surface implementation
+///        via ulPlatformSetSurfaceDefinition.
+///
+///        When using the default Surface, you can retrieve the underlying bitmap by casting
+///        ULSurface to ULBitmapSurface and calling ulBitmapSurfaceGetBitmap().
+///
+pub fn getSurface(self: View) Surface {
+    const ptr = c.ulViewGetSurface(self.ptr);
+    return .{ .ptr = ptr };
 }
 
 ///
