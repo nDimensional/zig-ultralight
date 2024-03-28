@@ -124,11 +124,11 @@ const File = struct {
 
     pub fn init(path: []const u8) !File {
         std.log.info("opening {s}", .{path});
-        const fd = try std.os.open(path, std.os.O.RDONLY, 644);
+        const fd = try std.os.open(path, .{}, 644);
         defer std.os.close(fd);
 
         const stat = try std.os.fstat(fd);
-        const data = try std.os.mmap(null, @intCast(stat.size), std.os.PROT.READ, std.os.MAP.SHARED, fd, 0);
+        const data = try std.os.mmap(null, @intCast(stat.size), std.os.PROT.READ, .{ .TYPE = .SHARED }, fd, 0);
         return File{ .data = data };
     }
 
