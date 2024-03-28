@@ -59,19 +59,29 @@ pub fn resize(self: Surface, width: u32, height: u32) void {
     c.ulSurfaceResize(self.ptr, width, height);
 }
 
-pub const Rect = struct {
+pub const IntRect = struct {
     left: i32,
     top: i32,
     right: i32,
     bottom: i32,
+
+    pub fn isEmpty(rect: IntRect) bool {
+        return c.ulIntRectIsEmpty(.{
+            .left = rect.left,
+            .top = rect.top,
+            .right = rect.right,
+            .bottom = rect.bottom,
+        });
+    }
 };
 
 ///
-/// Resize the pixel buffer to a certain width and height (both in pixels).
+/// Set the dirty bounds to a certain value.
 ///
-/// This should never be called while pixels are locked.
+/// This is called after the Renderer paints to an area of the pixel buffer. (The new value will be
+/// joined with the existing dirty_bounds())
 ///
-pub fn setDirtyBounds(self: Surface, bounds: Rect) void {
+pub fn setDirtyBounds(self: Surface, bounds: IntRect) void {
     c.ulSurfaceSetDirtyBounds(self.ptr, .{
         .left = bounds.left,
         .top = bounds.top,
@@ -98,7 +108,7 @@ pub fn setDirtyBounds(self: Surface, bounds: Rect) void {
 ///  }
 ///  </pre>
 ///
-pub fn getDirtyBounds(self: Surface) Rect {
+pub fn getDirtyBounds(self: Surface) IntRect {
     const bounds = c.ulSurfaceGetDirtyBounds(self.ptr);
     return .{
         .left = bounds.left,
