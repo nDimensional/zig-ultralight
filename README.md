@@ -4,9 +4,9 @@ Zig bindings for Ultralight.
 
 ## Usage
 
-Requires Zig `0.12.0-dev.3180+83e578a18` or later.
+Requires Zig `0.12.0-dev.3180+83e578a18` ([nominated Zig](https://machengine.org/about/nominated-zig/) `2024.3.0-mach`) or later.
 
-Add zig-ultralight to `build.zig.zon`
+Add zig-ultralight to `build.zig.zon`:
 
 ```
 .{
