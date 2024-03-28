@@ -55,8 +55,17 @@ var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
 
 fn fileExists(path: c.ULString) callconv(.C) bool {
     std.log.info("fileExists: {s}", .{getString(path)});
-    std.log.info("cwd: {s}", .{try std.fs.cwd().realpath(".", &path_buffer)});
-    std.log.info("abs: {s}", .{try std.fs.cwd().realpath(getString(path), &path_buffer)});
+
+    {
+        const cwd = std.fs.cwd().realpath(".", &path_buffer) catch unreachable;
+        std.log.info("cwd: {s}", .{cwd});
+    }
+
+    {
+        const abs = std.fs.cwd().realpath(getString(path), &path_buffer) catch unreachable;
+        std.log.info("abs: {s}", .{abs});
+    }
+
     std.fs.cwd().access(getString(path), .{ .mode = .read_only }) catch |err| {
         switch (err) {
             error.FileNotFound => {
