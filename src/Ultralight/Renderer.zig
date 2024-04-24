@@ -49,8 +49,8 @@ pub fn update(self: Renderer) void {
 /// This updates animations, smooth scroll, and window.requestAnimationFrame() for all Views
 /// matching the display id.
 ///
-pub fn refreshDisplay(self: Renderer) void {
-    c.ulRefreshDisplay(self.ptr);
+pub fn refreshDisplay(self: Renderer, display_id: u32) void {
+    c.ulRefreshDisplay(self.ptr, display_id);
 }
 
 ///

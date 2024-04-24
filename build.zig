@@ -1,5 +1,4 @@
 const std = @import("std");
-const LazyPath = std.Build.LazyPath;
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -14,7 +13,7 @@ pub fn build(b: *std.Build) !void {
     defer b.allocator.free(sdk_include);
 
     const ul = b.addModule("ul", .{
-        .root_source_file = LazyPath.relative("src/lib.zig"),
+        .root_source_file = b.path("src/lib.zig"),
         .target = target,
         .optimize = optimize,
     });
@@ -29,7 +28,7 @@ pub fn build(b: *std.Build) !void {
 
     const exe = b.addExecutable(.{
         .name = "example",
-        .root_source_file = LazyPath.relative("example.zig"),
+        .root_source_file = b.path("example.zig"),
         .target = target,
         .optimize = .ReleaseFast,
     });
