@@ -108,7 +108,7 @@ fn openFile(path: c.ULString) callconv(.C) c.ULBuffer {
         return null;
     };
 
-    const data = std.posix.mmap(null, @intCast(stat.size), std.posix, .PROT.READ, .{ .TYPE = .SHARED }, fd, 0) catch |err| {
+    const data = std.posix.mmap(null, @intCast(stat.size), std.posix.PROT.READ, .{ .TYPE = .SHARED }, fd, 0) catch |err| {
         std.log.err("error opening file: {any}", .{err});
         return null;
     };
@@ -119,7 +119,7 @@ fn openFile(path: c.ULString) callconv(.C) c.ULBuffer {
 fn destroyFileBuffer(user_data: ?*anyopaque, data: ?*anyopaque) callconv(.C) void {
     const ptr: [*]align(std.mem.page_size) const u8 = @alignCast(@ptrCast(data));
     const len = @intFromPtr(user_data);
-    std.os.munmap(ptr[0..len]);
+    std.posix.munmap(ptr[0..len]);
 }
 
 pub const filesystem = c.ULFileSystem{
