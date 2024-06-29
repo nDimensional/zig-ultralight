@@ -96,19 +96,19 @@ fn getFileCharset(_: c.ULString) callconv(.C) c.ULString {
 }
 
 fn openFile(path: c.ULString) callconv(.C) c.ULBuffer {
-    const fd = std.os.open(getString(path), .{}, 644) catch |err| {
+    const fd = std.posix.open(getString(path), .{}, 644) catch |err| {
         std.log.err("error opening file: {any}", .{err});
         return null;
     };
 
-    defer std.os.close(fd);
+    defer std.posix.close(fd);
 
-    const stat = std.os.fstat(fd) catch |err| {
+    const stat = std.posix.fstat(fd) catch |err| {
         std.log.err("error opening file: {any}", .{err});
         return null;
     };
 
-    const data = std.os.mmap(null, @intCast(stat.size), std.os.PROT.READ, .{ .TYPE = .SHARED }, fd, 0) catch |err| {
+    const data = std.posix.mmap(null, @intCast(stat.size), std.posix.PROT.READ, .{ .TYPE = .SHARED }, fd, 0) catch |err| {
         std.log.err("error opening file: {any}", .{err});
         return null;
     };
