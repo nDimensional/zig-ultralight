@@ -108,7 +108,7 @@ fn openFile(path: c.ULString) callconv(.C) c.ULBuffer {
         return null;
     };
 
-    const data = std.posix.mmap(null, @intCast(stat.size), std.posix.PROT.READ, .{ .TYPE = .SHARED }, fd, 0) catch |err| {
+    const data = std.posix.mmap(null, @intCast(stat.size), std.posix, .PROT.READ, .{ .TYPE = .SHARED }, fd, 0) catch |err| {
         std.log.err("error opening file: {any}", .{err});
         return null;
     };
