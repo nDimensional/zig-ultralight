@@ -1,6 +1,6 @@
 # zig-ultralight
 
-Zig bindings for Ultralight.
+Zig bindings for [Ultralight](https://ultralig.ht/), an embedded high-performance HTML renderer.
 
 ## Usage
 
