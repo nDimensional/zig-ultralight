@@ -47,8 +47,8 @@ const Environment = struct {
 
         const monitor = env.app.getMainMonitor();
         env.window = Window.create(monitor, .{
-            .width = 1200,
-            .height = 800,
+            .width = 600,
+            .height = 400,
             .tilted = true,
             .resizable = true,
         });
@@ -83,28 +83,35 @@ const Environment = struct {
         const ctx = event.view.lock();
         defer event.view.unlock();
 
-        const class = ctx.createClass(Environment, "Environment", &.{.{ .name = "boop", .exec = &boop }});
+        // create a class with some instance methods
+        const class = ctx.createClass(Environment, "Environment", &.{
+            .{ .name = "boop", .exec = &boop },
+        });
+
         const global = ctx.getGlobal();
         ctx.setProperty(global, "env", class.make(env));
-
-        ctx.evaluateScript("window.env.boop()") catch @panic("window.env.boop failed");
+        ctx.evaluateScript("console.log('HELLO WORLD!!')") catch |err| {
+            std.log.err("failed to evaluate script: {s}", .{@errorName(err)});
+        };
     }
 
     fn boop(env: *Environment, ctx: Context, args: []const ValueRef) !ValueRef {
         _ = env; // autofix
-        _ = ctx; // autofix
-        _ = args; // autofix
+
+        const val = ctx.getNumber(args[0]);
+        std.log.info("boop({d}) called from JavaScript context", .{val});
+
         return null;
     }
 
     fn onConsoleMessage(_: *Environment, event: View.ConsoleMessageEvent) void {
         const log = std.io.getStdOut().writer();
         const err = switch (event.level) {
-            .Log => log.print("[console.log] {s}\n", .{event.message}),
-            .Warning => log.print("[console.warn] {s}\n", .{event.message}),
-            .Error => log.print("[console.error] {s}\n", .{event.message}),
-            .Debug => log.print("[console.debug] {s}\n", .{event.message}),
-            .Info => log.print("[console.info] {s}\n", .{event.message}),
+            .Log => log.print("[console] [log] {s}\n", .{event.message}),
+            .Warning => log.print("[console] [warn] {s}\n", .{event.message}),
+            .Error => log.print("[console] [error] {s}\n", .{event.message}),
+            .Debug => log.print("[console] [debug] {s}\n", .{event.message}),
+            .Info => log.print("[console] [info] {s}\n", .{event.message}),
         };
 
         err catch @panic("fjkdls");
@@ -123,7 +130,6 @@ const File = struct {
     data: []align(std.mem.page_size) const u8,
 
     pub fn init(path: []const u8) !File {
-        std.log.info("opening {s}", .{path});
         const fd = try std.posix.open(path, .{}, 644);
         defer std.posix.close(fd);
 

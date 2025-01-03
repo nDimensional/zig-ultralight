@@ -2,18 +2,20 @@
 
 Zig bindings for [Ultralight](https://ultralig.ht/), an embedded high-performance HTML renderer.
 
+Built and tested with Zig version `0.13.0`.
+
 ## Usage
 
-Requires Zig `0.12.0-dev.3180+83e578a18` ([nominated Zig](https://machengine.org/about/nominated-zig/) `2024.3.0-mach`) or later.
+First, [download the Ultralight v1.4.0-beta SDK](https://github.com/ultralight-ux/Ultralight/releases/tag/v1.4.0-beta) for your platform.
 
-Add zig-ultralight to `build.zig.zon`:
+Then, add zig-ultralight to `build.zig.zon`:
 
 ```
 .{
     .dependencies = .{
         .ultralight = .{
             .url = "https://github.com/nDimensional/zig-ultralight/archive/$COMMIT.tar.gz",
-            // .hash = "12201d93aa50f0ebfb2e529a00c6c6f51f80ed86a0d857b4034f3037d1f240c7ddea",
+            // .hash = "...",
         },
     },
 }

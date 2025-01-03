@@ -49,12 +49,16 @@ pub fn setLogger(impl: c.ULLogger) void {
 }
 
 fn logMessage(log_level: c.ULLogLevel, message: c.ULString) callconv(.C) void {
-    switch (log_level) {
-        c.kLogLevel_Error => std.log.err("[ul] {s}", .{getString(message)}),
-        c.kLogLevel_Warning => std.log.warn("[ul] {s}", .{getString(message)}),
-        c.kLogLevel_Info => std.log.info("[ul] {s}", .{getString(message)}),
+    const file = switch (log_level) {
+        c.kLogLevel_Error => std.io.getStdErr(),
+        c.kLogLevel_Warning => std.io.getStdErr(),
+        c.kLogLevel_Info => std.io.getStdOut(),
         else => @panic("invalid log level"),
-    }
+    };
+
+    const writer = file.writer();
+    writer.writeAll(getString(message)) catch |err| @panic(@errorName(err));
+    writer.writeByte('\n') catch |err| @panic(@errorName(err));
 }
 
 pub const logger = c.ULLogger{ .log_message = &logMessage };
