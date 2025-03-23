@@ -1,6 +1,8 @@
 .{
-    .name = "zig-ultralight",
+    .name = .ultralight,
+    .fingerprint = 0x74c07d6780ed7c34,
     .version = "0.0.0",
+    .minimum_zig_version = "0.14.0",
     .paths = .{ "src", "build.zig", "build.zig.zon" },
     .dependencies = .{},
 }

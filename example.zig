@@ -95,9 +95,7 @@ const Environment = struct {
         };
     }
 
-    fn boop(env: *Environment, ctx: Context, args: []const ValueRef) !ValueRef {
-        _ = env; // autofix
-
+    fn boop(_: *Environment, ctx: Context, args: []const ValueRef) !ValueRef {
         const val = ctx.getNumber(args[0]);
         std.log.info("boop({d}) called from JavaScript context", .{val});
 
@@ -121,13 +119,11 @@ const Environment = struct {
         env.overlay.resize(event.window.getWidth(), event.window.getHeight());
     }
 
-    fn onUpdate(env: *Environment) void {
-        _ = env; // autofix
-    }
+    fn onUpdate(_: *Environment) void {}
 };
 
 const File = struct {
-    data: []align(std.mem.page_size) const u8,
+    data: []align(std.heap.page_size_min) const u8,
 
     pub fn init(path: []const u8) !File {
         const fd = try std.posix.open(path, .{}, 644);
