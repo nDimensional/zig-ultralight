@@ -2,11 +2,11 @@
 
 Zig bindings for [Ultralight](https://ultralig.ht/), an embedded high-performance HTML renderer.
 
-Built and tested with Zig version `0.13.0`.
+Built and tested with Zig version `0.14.0`.
 
 ## Usage
 
-First, [download the Ultralight v1.4.0-beta SDK](https://github.com/ultralight-ux/Ultralight/releases/tag/v1.4.0-beta) for your platform.
+First, [download the Ultralight v1.4.0 SDK](https://ultralig.ht/download) for your platform.
 
 Then, add zig-ultralight to `build.zig.zon`:
 
@@ -24,8 +24,14 @@ Then, add zig-ultralight to `build.zig.zon`:
 Then add the `ul` import to your root modules in `build.zig`, passing the path to the Ultralight SDK as a build argument:
 
 ```zig
-const ultralight = b.dependency("ultralight", .{ .SDK = @as([]const u8, "SDK") });
+const ultralight = b.dependency("ultralight", .{
+    .SDK = @as([]const u8, "path/to/sdk/folder"),
+});
 app.root_module.addImport("ul", ultralight.module("ul"));
 ```
 
-See the [example](example.zig) for API usage.
+To run the example [example](example.zig), pass the SDK path in usind `-DSDK` from the CLI:
+
+```
+$ zig build run -DSDK=path/to/sdk/folder
+```
